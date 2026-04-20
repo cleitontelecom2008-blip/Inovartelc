@@ -3,488 +3,575 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carimbo TEC MDU</title>
+    <title>Book – Construção / Ativação</title>
+    <meta name="theme-color" content="#d97706">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Book MDU">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
-        body { background: #f1f5f9; }
-        input, textarea, select {
-            border: 1px solid #e2e8f0;
-            border-radius: 0.375rem;
-            padding: 0.45rem 0.6rem;
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+        * { font-family: 'Inter', sans-serif; box-sizing: border-box; }
+
+        body { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%); min-height: 100vh; }
+
+        .field-input {
+            border: 1.5px solid #cbd5e1;
+            border-radius: 0.5rem;
+            padding: 0.55rem 0.75rem;
             width: 100%;
-            background-color: #fff;
-            font-size: 0.92rem;
+            background: #f8fafc;
+            color: #1e293b;
+            font-size: 0.875rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            outline: none;
         }
-        input:focus, textarea:focus { outline: 2px solid #3b82f6; border-color: transparent; }
+        .field-input:focus {
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 3px rgba(245,158,11,0.15);
+            background: #fff;
+        }
+
         .card {
-            background: white;
+            background: #fff;
             padding: 1.25rem 1.5rem;
-            border-radius: 0.6rem;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-            margin-bottom: 0.9rem;
+            border-radius: 1rem;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            margin-bottom: 1rem;
+            border: 1px solid #e2e8f0;
         }
-        .section-title {
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 2px solid #f1f5f9;
+            margin-bottom: 1rem;
+            padding-bottom: 0.6rem;
+        }
+        .card-header-dot {
+            width: 10px; height: 10px; border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .card-title {
             font-size: 0.75rem;
             font-weight: 700;
             letter-spacing: 0.08em;
             text-transform: uppercase;
-            border-bottom: 2px solid #e2e8f0;
-            padding-bottom: 0.4rem;
-            margin-bottom: 0.9rem;
-        }
-        .field-label {
-            font-size: 0.72rem;
-            font-weight: 600;
             color: #475569;
-            margin-bottom: 0.2rem;
-            display: block;
         }
-        .obrig { color: #ef4444; }
+
+        .label {
+            display: block;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #94a3b8;
+            margin-bottom: 0.25rem;
+        }
+
+        /* HFC Toggle */
+        .toggle-group { display: flex; gap: 0.5rem; }
+        .toggle-btn {
+            flex: 1;
+            padding: 0.55rem;
+            border-radius: 0.5rem;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            border: 2px solid #e2e8f0;
+            background: #f8fafc;
+            color: #94a3b8;
+            transition: all 0.15s;
+        }
+        .toggle-btn.active-sim {
+            background: #dcfce7; border-color: #16a34a; color: #15803d;
+        }
+        .toggle-btn.active-nao {
+            background: #fee2e2; border-color: #dc2626; color: #b91c1c;
+        }
+
+        /* Gold Header */
+        .gold-header {
+            background: linear-gradient(135deg, #92400e, #d97706, #fbbf24, #d97706, #92400e);
+            background-size: 200% 100%;
+            animation: shimmer 3s linear infinite;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        /* Book logo glow */
+        .logo-wrap {
+            display: flex; flex-direction: column; align-items: center;
+            gap: 0.25rem; margin-bottom: 1.5rem;
+        }
+        .logo-badge {
+            background: linear-gradient(135deg, #78350f, #d97706);
+            color: #fef3c7;
+            font-size: 0.65rem;
+            font-weight: 800;
+            letter-spacing: 0.15em;
+            padding: 0.2rem 0.75rem;
+            border-radius: 99px;
+            text-transform: uppercase;
+        }
+
+        /* Action buttons */
+        .action-btn {
+            display: flex; align-items: center; gap: 0.4rem;
+            padding: 0.55rem 1rem;
+            border-radius: 0.6rem;
+            font-size: 0.8rem; font-weight: 700;
+            cursor: pointer; border: none;
+            transition: all 0.15s; box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        }
+        .btn-whats { background: #16a34a; color: #fff; }
+        .btn-whats:hover { background: #15803d; }
+        .btn-print { background: #7c3aed; color: #fff; }
+        .btn-print:hover { background: #6d28d9; }
+        .btn-excel { background: #0369a1; color: #fff; }
+        .btn-excel:hover { background: #075985; }
+        .btn-clear { background: #dc2626; color: #fff; }
+        .btn-clear:hover { background: #b91c1c; }
+
+        /* Toast */
         #toast {
             visibility: hidden;
-            min-width: 200px;
-            background: #1e293b;
-            color: #fff;
+            min-width: 180px;
+            background: rgba(15,23,42,0.95);
+            color: #fef3c7;
+            font-weight: 600;
+            font-size: 0.85rem;
             text-align: center;
-            border-radius: 8px;
+            border-radius: 12px;
             padding: 14px 20px;
             position: fixed;
-            z-index: 100;
+            z-index: 200;
             left: 50%;
             transform: translateX(-50%);
             bottom: 30px;
-            font-size: 0.9rem;
+            border: 1px solid #d97706;
         }
         #toast.show {
             visibility: visible;
-            animation: fadein 0.4s, fadeout 0.4s 2.6s;
+            animation: fadein 0.4s, fadeout 0.5s 2.5s;
         }
-        @keyframes fadein  { from {bottom: 10px; opacity: 0} to {bottom: 30px; opacity: 1} }
-        @keyframes fadeout { from {bottom: 30px; opacity: 1} to {bottom: 10px; opacity: 0} }
+        @keyframes fadein { from { bottom: 0; opacity: 0; } to { bottom: 30px; opacity: 1; } }
+        @keyframes fadeout { from { bottom: 30px; opacity: 1; } to { bottom: 0; opacity: 0; } }
 
-        .item-row { position: relative; }
-        .delete-btn { opacity: 0; transition: opacity 0.2s; }
-        .item-row:hover .delete-btn { opacity: 1; }
-        @media (max-width: 768px) { .delete-btn { opacity: 1; } }
-
-        .printing-mode input,
-        .printing-mode textarea {
+        /* Print mode */
+        .printing-mode .field-input {
             border: none !important;
-            padding-left: 0 !important;
-            font-weight: 600;
-            color: #1a202c;
+            background: transparent !important;
+            font-weight: 700;
+            color: #1e293b;
+            padding-left: 0;
+        }
+        .printing-mode .toggle-btn { border-width: 1px; }
+
+        /* Required asterisk */
+        .req { color: #f59e0b; }
+
+        /* Section number badge */
+        .sec-num {
+            background: #fbbf24;
+            color: #78350f;
+            font-size: 0.65rem;
+            font-weight: 800;
+            width: 20px; height: 20px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
         }
 
-        /* Header gradient */
-        .app-header {
-            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-            color: white;
-            border-radius: 0.75rem;
-            padding: 1rem 1.5rem;
-            margin-bottom: 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        @media print {
+            .no-print { display: none !important; }
+            body { background: #fff; }
+            .card { box-shadow: none; border: 1px solid #ccc; }
         }
     </style>
 </head>
-<body class="min-h-screen p-3 md:p-6">
+<body class="p-4 md:p-8">
 
-<div id="toast">Operação realizada!</div>
+    <div id="toast">✓ Operação realizada!</div>
 
-<div class="max-w-2xl mx-auto">
+    <div class="max-w-2xl mx-auto">
 
-    <!-- Header -->
-    <div class="app-header no-screenshot">
-        <div>
-            <div class="text-xs font-semibold opacity-80 tracking-widest uppercase">Claro / Inovar Telecom</div>
-            <div class="text-xl font-bold">Carimbo TEC MDU</div>
+        <!-- ====== HEADER ====== -->
+        <div class="logo-wrap no-print">
+            <div style="font-size:2.5rem; font-weight:900; letter-spacing:-1px;" class="gold-header">BOOK</div>
+            <div class="logo-badge">Inovar Telecom · Equipe MDU</div>
         </div>
-        <div class="flex gap-2 flex-wrap justify-end">
-            <button onclick="copyWhatsApp()" class="bg-white/20 hover:bg-white/30 text-white text-xs font-bold px-3 py-2 rounded-lg transition flex items-center gap-1">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3"/></svg>
+
+        <div id="capture-area" class="space-y-3">
+
+            <!-- TÍTULO DO CARIMBO -->
+            <div class="card" style="background: linear-gradient(135deg,#1e3a5f,#0f172a); border-color:#334155;">
+                <div class="text-center">
+                    <p class="text-xs font-bold tracking-widest text-amber-400 mb-1">CARIMBO DIGITAL</p>
+                    <h1 class="text-xl font-black text-white tracking-wide">CONSTRUÇÃO <span class="text-amber-400">/</span> ATIVAÇÃO</h1>
+                    <p id="header-subtitle" class="text-slate-400 text-xs mt-1 font-medium"></p>
+                </div>
+            </div>
+
+            <!-- 1. DATAS -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="sec-num">1</div>
+                    <span class="card-title" style="color:#d97706;">Datas do Serviço</span>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="label">Data Início <span class="req">*</span></label>
+                        <input class="field-input" type="date" id="f-data-inicio">
+                    </div>
+                    <div>
+                        <label class="label">Data Conclusão</label>
+                        <input class="field-input" type="date" id="f-data-conclusao">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. LOCALIZAÇÃO -->
+            <div class="card">
+                <div class="card-header" style="justify-content:space-between;">
+                    <div style="display:flex;align-items:center;gap:0.5rem;">
+                        <div class="sec-num">2</div>
+                        <span class="card-title" style="color:#0369a1;">Localização</span>
+                    </div>
+                    <button onclick="getGeo()" class="no-print action-btn" style="background:#0369a1;color:#fff;font-size:0.7rem;padding:0.3rem 0.7rem;">
+                        📍 GPS
+                    </button>
+                </div>
+                <div class="space-y-3">
+                    <div>
+                        <label class="label">Endereço (Rua) <span class="req">*</span></label>
+                        <input class="field-input" type="text" id="f-endereco" placeholder="Nome da rua...">
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="label">Número</label>
+                            <input class="field-input" type="text" id="f-numero" placeholder="Ex: 123 ou S/N">
+                        </div>
+                        <div>
+                            <label class="label">Condomínio / Edifício</label>
+                            <input class="field-input" type="text" id="f-condominio" placeholder="Nome do cond.">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. DADOS TÉCNICOS -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="sec-num">3</div>
+                    <span class="card-title" style="color:#7c3aed;">Dados Técnicos</span>
+                </div>
+                <div class="space-y-4">
+
+                    <!-- HFC -->
+                    <div>
+                        <label class="label">Possui HFC?</label>
+                        <div class="toggle-group">
+                            <button class="toggle-btn" id="hfc-sim" onclick="setHFC('SIM')">✅ SIM</button>
+                            <button class="toggle-btn" id="hfc-nao" onclick="setHFC('NÃO')">❌ NÃO</button>
+                        </div>
+                        <input type="hidden" id="f-hfc" value="">
+                    </div>
+
+                    <!-- Caixa M / Node / Área -->
+                    <div class="grid grid-cols-3 gap-3">
+                        <div>
+                            <label class="label">Caixa M</label>
+                            <input class="field-input" type="text" id="f-caixa-m" placeholder="Ex: M01">
+                        </div>
+                        <div>
+                            <label class="label">Node</label>
+                            <input class="field-input" type="text" id="f-node" placeholder="Ex: N-47">
+                        </div>
+                        <div>
+                            <label class="label">Área</label>
+                            <input class="field-input" type="text" id="f-area" placeholder="Ex: A3">
+                        </div>
+                    </div>
+
+                    <!-- DIO / NAP / Prumadas -->
+                    <div class="grid grid-cols-3 gap-3">
+                        <div>
+                            <label class="label">DIO</label>
+                            <input class="field-input" type="text" id="f-dio" placeholder="Ex: DIO-02">
+                        </div>
+                        <div>
+                            <label class="label">NAP</label>
+                            <input class="field-input" type="text" id="f-nap" placeholder="Ex: NAP-05">
+                        </div>
+                        <div>
+                            <label class="label">Qtd. Prumadas</label>
+                            <input class="field-input" type="number" id="f-prumadas" placeholder="0" min="0">
+                        </div>
+                    </div>
+
+                    <!-- Andares / HP -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="label">Quantos Andares</label>
+                            <input class="field-input" type="number" id="f-andares" placeholder="0" min="0">
+                        </div>
+                        <div>
+                            <label class="label">Quantos HP</label>
+                            <input class="field-input" type="number" id="f-hp" placeholder="0" min="0">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- 4. OBSERVAÇÃO -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="sec-num">4</div>
+                    <span class="card-title" style="color:#dc2626;">Observações</span>
+                </div>
+                <textarea class="field-input" id="f-obs" rows="4" placeholder="Descreva ocorrências, pendências ou informações adicionais..." style="resize:vertical;"></textarea>
+            </div>
+
+        </div>
+        <!-- end capture-area -->
+
+        <!-- ====== ACTIONS ====== -->
+        <div class="flex flex-wrap justify-center gap-3 mt-6 mb-4 no-print">
+            <button onclick="copyWhatsApp()" class="action-btn btn-whats">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
                 WhatsApp
             </button>
-            <button onclick="tirarPrint()" class="bg-white/20 hover:bg-white/30 text-white text-xs font-bold px-3 py-2 rounded-lg transition flex items-center gap-1">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><circle cx="12" cy="13" r="3"/></svg>
-                Print
+            <button onclick="takeScreenshot()" class="action-btn btn-print">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><circle cx="12" cy="13" r="3" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+                Gerar Print
             </button>
-            <button onclick="limparTudo()" class="bg-white/10 hover:bg-white/20 text-white text-xs font-bold px-3 py-2 rounded-lg transition">
-                🗑 Limpar
+            <button onclick="exportExcel()" class="action-btn btn-excel">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                Excel
             </button>
+            <button onclick="clearAll()" class="action-btn btn-clear">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                Limpar
+            </button>
+        </div>
+
+        <footer class="text-center text-slate-500 text-xs pb-10 no-print">
+            Inovar Telecom · Equipe MDU · Book Construção/Ativação
+        </footer>
+    </div>
+
+    <!-- ====== MODAL SCREENSHOT ====== -->
+    <div id="screenshot-modal" class="fixed inset-0 bg-black bg-opacity-85 hidden z-50 flex flex-col items-center justify-center p-4">
+        <div class="bg-white p-4 rounded-2xl max-w-full max-h-[90vh] overflow-auto flex flex-col items-center relative shadow-2xl">
+            <button onclick="closeModal()" class="absolute top-3 right-3 text-gray-400 hover:text-black">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+            <h3 class="text-base font-black mb-1 text-gray-800">📋 Carimbo Gerado</h3>
+            <p class="text-xs text-amber-600 mb-3 font-medium">Pressione a imagem para guardar ou partilhar.</p>
+            <div id="screenshot-container" class="mb-4 shadow border rounded-lg overflow-hidden"></div>
+            <button onclick="closeModal()" class="bg-slate-800 text-white px-8 py-2 rounded-lg font-bold text-sm">Fechar</button>
         </div>
     </div>
 
-    <div id="capture-area" class="p-1">
+    <script>
+        // ── Service Worker ──────────────────────────────
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js').catch(() => {});
+        }
 
-        <!-- Cabeçalho do carimbo -->
-        <div class="card">
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label class="field-label">DATA</label>
-                    <input type="date" id="f-data">
-                </div>
-                <div>
-                    <label class="field-label">TÉCNICO RESPONSÁVEL</label>
-                    <input type="text" id="f-tecnico" placeholder="Nome do técnico">
-                </div>
-            </div>
-        </div>
+        // ── Init dates ──────────────────────────────────
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('f-data-inicio').value = today;
 
-        <!-- Informações do Projeto -->
-        <div class="card">
-            <div class="section-title text-red-700">📋 Informações do Projeto</div>
+        // ── HFC toggle ──────────────────────────────────
+        let hfcValue = '';
+        function setHFC(val) {
+            hfcValue = val;
+            document.getElementById('f-hfc').value = val;
+            document.getElementById('hfc-sim').className = 'toggle-btn' + (val === 'SIM' ? ' active-sim' : '');
+            document.getElementById('hfc-nao').className = 'toggle-btn' + (val === 'NÃO' ? ' active-nao' : '');
+        }
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
-                <div>
-                    <label class="field-label"><span class="obrig">*</span> TIPO DE PROJETO</label>
-                    <select id="f-tipo-projeto">
-                        <option value="">Selecione...</option>
-                        <option>MDU Novo</option>
-                        <option>MDU Retrofit</option>
-                        <option>MDU Ampliação</option>
-                        <option>MDU Correção</option>
-                        <option>MDU Manutenção</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="field-label"><span class="obrig">*</span> EMPRESA RESPONSÁVEL</label>
-                    <input type="text" id="f-empresa" placeholder="Ex: Inovar Telecom">
-                </div>
-            </div>
+        // ── Helpers ─────────────────────────────────────
+        const gv = id => (document.getElementById(id)?.value || '').trim() || '—';
+        const fmtDate = id => {
+            const v = document.getElementById(id)?.value;
+            if (!v) return '—';
+            const [y, m, d] = v.split('-');
+            return `${d}/${m}/${y}`;
+        };
 
-            <div class="mb-3">
-                <label class="field-label"><span class="obrig">*</span> ENDEREÇO</label>
-                <div class="flex gap-2">
-                    <input type="text" id="f-endereco" placeholder="Rua, Número, Bairro, Cidade - UF" class="flex-1">
-                    <button onclick="obterGPS()" class="no-screenshot bg-red-600 text-white text-xs font-bold px-3 py-2 rounded-lg hover:bg-red-700 transition whitespace-nowrap">📍 GPS</button>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                    <label class="field-label">NOME EDI / CONDOMÍNIO / BLOCO</label>
-                    <input type="text" id="f-nome-edi" placeholder="Nome do empreendimento">
-                </div>
-                <div>
-                    <label class="field-label">QUANTIDADE DE BLOCOS</label>
-                    <input type="number" id="f-qtd-blocos" placeholder="0" min="0">
-                </div>
-            </div>
-        </div>
-
-        <!-- Dados Técnicos -->
-        <div class="card">
-            <div class="section-title text-gray-700">🔧 Dados Técnicos</div>
-
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-3">
-                <div>
-                    <label class="field-label"><span class="obrig">*</span> QUANTIDADE DE HP</label>
-                    <input type="number" id="f-qtd-hp" placeholder="0" min="0">
-                </div>
-                <div>
-                    <label class="field-label"><span class="obrig">*</span> NODE</label>
-                    <input type="text" id="f-node" placeholder="Ex: N001">
-                </div>
-                <div>
-                    <label class="field-label"><span class="obrig">*</span> CAIXA M</label>
-                    <input type="text" id="f-caixa-m" placeholder="Ex: CM-01">
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                    <label class="field-label"><span class="obrig">*</span> COD. IMÓVEL / ID DEMANDA</label>
-                    <input type="text" id="f-cod-imovel" placeholder="Código ou ID">
-                </div>
-                <div>
-                    <label class="field-label"><span class="obrig">*</span> ANDAR DAS NAPS</label>
-                    <input type="text" id="f-andar-naps" placeholder="Ex: 1°, 3°, Térreo">
-                </div>
-            </div>
-        </div>
-
-        <!-- Serviços Realizados -->
-        <div class="card">
-            <div class="section-title text-blue-700">✅ Serviços Realizados</div>
-            <div id="servicos-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3"></div>
-            <div class="flex gap-2 no-screenshot mt-2">
-                <input type="text" id="new-servico" placeholder="Adicionar serviço..." class="flex-1 text-sm">
-                <button onclick="addServico()" class="bg-blue-50 text-blue-700 font-bold px-3 py-2 rounded border border-blue-200 hover:bg-blue-100 transition text-sm">+ Add</button>
-            </div>
-        </div>
-
-        <!-- Material Utilizado -->
-        <div class="card">
-            <div class="section-title text-orange-700">📦 Material Utilizado</div>
-            <div id="materiais-list" class="space-y-2 mb-3"></div>
-            <div class="flex gap-2 no-screenshot mt-2">
-                <input type="text" id="new-material" placeholder="Adicionar material..." class="flex-1 text-sm">
-                <button onclick="addMaterial()" class="bg-orange-50 text-orange-700 font-bold px-3 py-2 rounded border border-orange-200 hover:bg-orange-100 transition text-sm">+ Add</button>
-            </div>
-        </div>
-
-        <!-- Observações -->
-        <div class="card">
-            <div class="section-title text-gray-600">📝 Observações</div>
-            <textarea id="f-obs" rows="3" placeholder="Pendências, ocorrências, observações gerais..."></textarea>
-        </div>
-
-    </div><!-- /capture-area -->
-
-    <footer class="text-center text-gray-400 text-xs mt-4 pb-8">
-        Inovar Telecom · Carimbo TEC MDU
-    </footer>
-</div>
-
-<!-- Modal Print -->
-<div id="print-modal" class="fixed inset-0 bg-black/80 hidden z-50 flex items-center justify-center p-4">
-    <div class="bg-white p-4 rounded-xl max-w-full max-h-[92vh] overflow-auto flex flex-col items-center relative w-full">
-        <button onclick="document.getElementById('print-modal').classList.add('hidden')" class="absolute top-3 right-3 text-gray-500 hover:text-black p-1">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-        </button>
-        <h3 class="text-base font-bold mb-3 text-gray-800">Carimbo TEC MDU</h3>
-        <p class="text-xs text-blue-600 mb-3">Pressione e segure a imagem para salvar/compartilhar.</p>
-        <div id="print-container" class="shadow-lg border rounded mb-4 w-full"></div>
-        <button onclick="document.getElementById('print-modal').classList.add('hidden')" class="bg-red-600 text-white px-8 py-2 rounded-lg font-bold text-sm">Fechar</button>
-    </div>
-</div>
-
-<script>
-// ── Persistência ──────────────────────────────────────────────
-const STORE_KEY = 'carimbo_mdu_v1';
-
-const defaultStore = {
-    tecnico: '',
-    empresa: 'Inovar Telecom',
-    servicos: [
-        'Passagem de cabo coaxial',
-        'Instalação de splitter',
-        'Certificação de sinal',
-        'Instalação de NAP',
-        'Identificação de portas',
-        'Teste de continuidade',
-        'Instalação de ONU/ONT',
-        'Acerto de passagem vertical'
-    ],
-    materiais: [
-        'Cabo coaxial (metros)',
-        'Conector F',
-        'Splitter',
-        'NAP',
-        'Abraçadeira',
-        'Canaleta (metros)',
-        'Fio óptico drop (metros)',
-        'Rótulo/etiqueta'
-    ]
-};
-
-let store = (() => {
-    try { return JSON.parse(localStorage.getItem(STORE_KEY)) || JSON.parse(JSON.stringify(defaultStore)); }
-    catch { return JSON.parse(JSON.stringify(defaultStore)); }
-})();
-
-function saveStore() { localStorage.setItem(STORE_KEY, JSON.stringify(store)); }
-
-// ── Init ──────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('f-data').value = new Date().toISOString().split('T')[0];
-
-    const tec = document.getElementById('f-tecnico');
-    tec.value = store.tecnico || '';
-    tec.addEventListener('input', () => { store.tecnico = tec.value; saveStore(); });
-
-    const emp = document.getElementById('f-empresa');
-    emp.value = store.empresa || '';
-    emp.addEventListener('input', () => { store.empresa = emp.value; saveStore(); });
-
-    renderServicos();
-    renderMateriais();
-});
-
-// ── Serviços ──────────────────────────────────────────────────
-function renderServicos() {
-    const c = document.getElementById('servicos-list');
-    c.innerHTML = '';
-    store.servicos.forEach((s, i) => {
-        const d = document.createElement('div');
-        d.className = 'item-row flex items-center gap-2 p-2 bg-gray-50 rounded border border-transparent hover:border-blue-100 group';
-        d.innerHTML = `
-            <input type="checkbox" id="sv-${i}" class="w-5 h-5 cursor-pointer no-screenshot-check" data-name="${s}">
-            <label for="sv-${i}" class="text-sm text-gray-700 cursor-pointer flex-1 select-none">${s}</label>
-            <button onclick="removeServico(${i})" class="delete-btn no-screenshot text-red-400 hover:text-red-600 p-1 rounded hover:bg-red-50 text-xs" title="Remover">✕</button>
-        `;
-        c.appendChild(d);
-    });
-}
-
-function addServico() {
-    const inp = document.getElementById('new-servico');
-    const val = inp.value.trim();
-    if (val && !store.servicos.includes(val)) {
-        store.servicos.push(val);
-        saveStore();
-        inp.value = '';
-        renderServicos();
-        showToast('Serviço adicionado!');
-    }
-}
-
-function removeServico(i) {
-    store.servicos.splice(i, 1);
-    saveStore();
-    renderServicos();
-}
-
-// ── Materiais ─────────────────────────────────────────────────
-function renderMateriais() {
-    const c = document.getElementById('materiais-list');
-    c.innerHTML = '';
-    store.materiais.forEach((m, i) => {
-        const d = document.createElement('div');
-        d.className = 'item-row flex items-center gap-2 p-2 bg-gray-50 rounded border border-transparent hover:border-orange-100 group';
-        d.innerHTML = `
-            <input type="checkbox" id="mt-${i}" class="w-5 h-5 cursor-pointer no-screenshot-check" data-name="${m}">
-            <label for="mt-${i}" class="text-sm text-gray-700 cursor-pointer flex-1 select-none">${m}</label>
-            <input type="text" id="qty-mt-${i}" placeholder="Qtd" class="w-16 text-xs py-1 h-8 bg-white" onclick="document.getElementById('mt-${i}').checked=true">
-            <button onclick="removeMaterial(${i})" class="delete-btn no-screenshot text-red-400 hover:text-red-600 p-1 rounded hover:bg-red-50 text-xs" title="Remover">✕</button>
-        `;
-        c.appendChild(d);
-    });
-}
-
-function addMaterial() {
-    const inp = document.getElementById('new-material');
-    const val = inp.value.trim();
-    if (val && !store.materiais.includes(val)) {
-        store.materiais.push(val);
-        saveStore();
-        inp.value = '';
-        renderMateriais();
-        showToast('Material adicionado!');
-    }
-}
-
-function removeMaterial(i) {
-    store.materiais.splice(i, 1);
-    saveStore();
-    renderMateriais();
-}
-
-// ── GPS ───────────────────────────────────────────────────────
-async function obterGPS() {
-    if (!navigator.geolocation) { showToast('GPS não disponível.'); return; }
-    showToast('Buscando localização...');
-    navigator.geolocation.getCurrentPosition(async pos => {
-        try {
-            const r = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}&addressdetails=1`);
-            const d = await r.json();
-            if (d.address) {
-                const a = d.address;
-                const rua  = a.road || a.pedestrian || '';
-                const num  = a.house_number ? `, ${a.house_number}` : '';
-                const bai  = a.suburb || a.neighbourhood || a.city_district || '';
-                const cid  = a.city || a.town || a.village || '';
-                const est  = a.state_code || a.state || '';
-                document.getElementById('f-endereco').value = `${rua}${num}${bai ? ', ' + bai : ''} - ${cid}/${est}`;
-                showToast('Endereço preenchido!');
-            }
-        } catch { showToast('Erro ao identificar endereço.'); }
-    }, () => showToast('Permissão de GPS negada.'));
-}
-
-// ── Helpers ───────────────────────────────────────────────────
-const g = id => (document.getElementById(id)?.value || '').trim() || '---';
-
-// ── WhatsApp ──────────────────────────────────────────────────
-function copyWhatsApp() {
-    const svs  = [...document.querySelectorAll('[id^="sv-"]:checked')].map(c => '✅ ' + c.getAttribute('data-name'));
-    const mats = [...document.querySelectorAll('[id^="mt-"]:checked')].map(c => {
-        const idx = c.id.split('-')[1];
-        const qty = document.getElementById(`qty-mt-${idx}`)?.value || '—';
-        return `📦 ${qty}x ${c.getAttribute('data-name')}`;
-    });
-
-    let t = `🏢 *CARIMBO TEC MDU*\n`;
-    t += `📅 *Data:* ${g('f-data')} | 👷 *Técnico:* ${g('f-tecnico')}\n\n`;
-    t += `📋 *INFORMAÇÕES DO PROJETO*\n`;
-    t += `▸ Tipo de Projeto: ${g('f-tipo-projeto')}\n`;
-    t += `▸ Endereço: ${g('f-endereco')}\n`;
-    t += `▸ Nome EDI/Condomínio/Bloco: ${g('f-nome-edi')}\n`;
-    t += `▸ Qtd. Blocos: ${g('f-qtd-blocos')}\n\n`;
-    t += `🔧 *DADOS TÉCNICOS*\n`;
-    t += `▸ Qtd. HP: ${g('f-qtd-hp')}\n`;
-    t += `▸ NODE: ${g('f-node')}\n`;
-    t += `▸ Caixa M: ${g('f-caixa-m')}\n`;
-    t += `▸ Cód. Imóvel / ID Demanda: ${g('f-cod-imovel')}\n`;
-    t += `▸ Andar das NAPs: ${g('f-andar-naps')}\n`;
-    t += `▸ Empresa: ${g('f-empresa')}\n`;
-    if (svs.length)  t += `\n✅ *SERVIÇOS:*\n${svs.join('\n')}\n`;
-    if (mats.length) t += `\n📦 *MATERIAIS:*\n${mats.join('\n')}\n`;
-    const obs = g('f-obs');
-    if (obs !== '---') t += `\n📝 *OBS:* ${obs}\n`;
-
-    navigator.clipboard?.writeText(t).then(() => showToast('Copiado para o WhatsApp!'))
-        .catch(() => {
-            const el = document.createElement('textarea');
-            el.value = t; document.body.appendChild(el); el.select();
-            document.execCommand('copy'); document.body.removeChild(el);
-            showToast('Copiado!');
+        // Update subtitle live
+        function updateSubtitle() {
+            const end = gv('f-endereco');
+            const cond = gv('f-condominio');
+            let sub = end !== '—' ? end : '';
+            if (cond !== '—') sub += (sub ? ' · ' : '') + cond;
+            document.getElementById('header-subtitle').textContent = sub || 'Preencha os dados abaixo';
+        }
+        ['f-endereco','f-condominio'].forEach(id => {
+            document.getElementById(id).addEventListener('input', updateSubtitle);
         });
-}
+        updateSubtitle();
 
-// ── Print ─────────────────────────────────────────────────────
-async function tirarPrint() {
-    const area = document.getElementById('capture-area');
-    const hide = document.querySelectorAll('.no-screenshot');
-    hide.forEach(el => el.style.display = 'none');
-    document.querySelectorAll('.item-row').forEach(row => {
-        const cb = row.querySelector('input[type="checkbox"]');
-        if (cb && !cb.checked) row.style.display = 'none';
-        else if (cb) cb.style.display = 'none';
-    });
-    area.classList.add('printing-mode');
-    try {
-        const canvas = await html2canvas(area, { backgroundColor: '#f1f5f9', scale: 2.5, useCORS: true });
-        const img = document.createElement('img');
-        img.src = canvas.toDataURL('image/png');
-        img.className = 'max-w-full h-auto rounded';
-        document.getElementById('print-container').innerHTML = '';
-        document.getElementById('print-container').appendChild(img);
-        document.getElementById('print-modal').classList.remove('hidden');
-    } catch { showToast('Erro ao gerar imagem.'); }
-    finally {
-        hide.forEach(el => el.style.display = '');
-        document.querySelectorAll('.item-row').forEach(r => r.style.display = '');
-        document.querySelectorAll('[id^="sv-"], [id^="mt-"]').forEach(cb => cb.style.display = '');
-        area.classList.remove('printing-mode');
-    }
-}
+        // ── WhatsApp ─────────────────────────────────────
+        function copyWhatsApp() {
+            const hfc = hfcValue || '—';
+            let text = `📋 *CARIMBO – CONSTRUÇÃO / ATIVAÇÃO*\n`;
+            text += `━━━━━━━━━━━━━━━━━━━━\n`;
+            text += `📅 *DATA INÍCIO:* ${fmtDate('f-data-inicio')}\n`;
+            text += `📅 *DATA CONCLUSÃO:* ${fmtDate('f-data-conclusao')}\n`;
+            text += `━━━━━━━━━━━━━━━━━━━━\n`;
+            text += `📍 *ENDEREÇO:* ${gv('f-endereco')}\n`;
+            text += `🔢 *NÚMERO:* ${gv('f-numero')}\n`;
+            text += `🏢 *CONDOMÍNIO:* ${gv('f-condominio')}\n`;
+            text += `━━━━━━━━━━━━━━━━━━━━\n`;
+            text += `📡 *POSSUI HFC:* ${hfc}\n`;
+            text += `📦 *CAIXA M:* ${gv('f-caixa-m')}\n`;
+            text += `🔗 *NODE:* ${gv('f-node')}\n`;
+            text += `🗺 *ÁREA:* ${gv('f-area')}\n`;
+            text += `━━━━━━━━━━━━━━━━━━━━\n`;
+            text += `🔢 *QTD. PRUMADAS:* ${gv('f-prumadas')}\n`;
+            text += `🔌 *DIO:* ${gv('f-dio')}\n`;
+            text += `📌 *NAP:* ${gv('f-nap')}\n`;
+            text += `🏗 *ANDARES:* ${gv('f-andares')}\n`;
+            text += `⚡ *HP:* ${gv('f-hp')}\n`;
+            const obs = gv('f-obs');
+            if (obs !== '—') {
+                text += `━━━━━━━━━━━━━━━━━━━━\n`;
+                text += `📝 *OBSERVAÇÃO:*\n${obs}\n`;
+            }
+            text += `\n_Inovar Telecom · Equipe MDU_`;
 
-// ── Limpar ────────────────────────────────────────────────────
-function limparTudo() {
-    if (!confirm('Limpar todos os campos? Os serviços/materiais cadastrados serão mantidos.')) return;
-    ['f-tipo-projeto','f-endereco','f-nome-edi','f-qtd-blocos',
-     'f-qtd-hp','f-node','f-caixa-m','f-cod-imovel','f-andar-naps','f-obs']
-        .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
-    document.getElementById('f-data').value = new Date().toISOString().split('T')[0];
-    document.querySelectorAll('[id^="sv-"], [id^="mt-"]').forEach(cb => cb.checked = false);
-    document.querySelectorAll('[id^="qty-mt-"]').forEach(el => el.value = '');
-    showToast('Campos limpos!');
-}
+            navigator.clipboard.writeText(text)
+                .then(() => showToast('✅ Copiado para o WhatsApp!'))
+                .catch(() => {
+                    const ta = document.createElement('textarea');
+                    ta.value = text;
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(ta);
+                    showToast('✅ Copiado!');
+                });
+        }
 
-// ── Toast ─────────────────────────────────────────────────────
-function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.innerText = msg; t.className = 'show';
-    setTimeout(() => t.className = '', 3000);
-}
+        // ── Screenshot ───────────────────────────────────
+        async function takeScreenshot() {
+            const el = document.getElementById('capture-area');
+            const hides = document.querySelectorAll('.no-print');
+            hides.forEach(e => e.style.display = 'none');
+            el.classList.add('printing-mode');
+            try {
+                const canvas = await html2canvas(el, { backgroundColor: '#f8fafc', scale: 3, useCORS: true });
+                const img = new Image();
+                img.src = canvas.toDataURL('image/png');
+                img.className = 'max-w-full h-auto rounded shadow';
+                document.getElementById('screenshot-container').innerHTML = '';
+                document.getElementById('screenshot-container').appendChild(img);
+                document.getElementById('screenshot-modal').classList.remove('hidden');
+            } catch(e) {
+                showToast('⚠️ Erro ao gerar imagem.');
+            } finally {
+                hides.forEach(e => e.style.display = '');
+                el.classList.remove('printing-mode');
+            }
+        }
+        function closeModal() {
+            document.getElementById('screenshot-modal').classList.add('hidden');
+        }
 
-// Service Worker
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js').catch(() => {});
-}
-</script>
+        // ── Excel ─────────────────────────────────────────
+        function exportExcel() {
+            const hfc = hfcValue || '—';
+            const rows = [
+                ['CARIMBO – CONSTRUÇÃO / ATIVAÇÃO'],
+                [''],
+                ['CAMPO', 'VALOR'],
+                ['DATA INÍCIO', fmtDate('f-data-inicio')],
+                ['DATA CONCLUSÃO', fmtDate('f-data-conclusao')],
+                [''],
+                ['ENDEREÇO', gv('f-endereco')],
+                ['NÚMERO', gv('f-numero')],
+                ['CONDOMÍNIO', gv('f-condominio')],
+                [''],
+                ['POSSUI HFC', hfc],
+                ['CAIXA M', gv('f-caixa-m')],
+                ['NODE', gv('f-node')],
+                ['ÁREA', gv('f-area')],
+                [''],
+                ['QTD. PRUMADAS', gv('f-prumadas')],
+                ['DIO', gv('f-dio')],
+                ['NAP', gv('f-nap')],
+                ['QUANTOS ANDARES', gv('f-andares')],
+                ['QUANTOS HP', gv('f-hp')],
+                [''],
+                ['OBSERVAÇÃO', gv('f-obs')],
+            ];
+            const ws = XLSX.utils.aoa_to_sheet(rows);
+            ws['!cols'] = [{ wch: 22 }, { wch: 40 }];
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'CARIMBO');
+            XLSX.writeFile(wb, `Carimbo_Construcao_${today}.xlsx`);
+            showToast('📊 Excel gerado!');
+        }
+
+        // ── Clear ─────────────────────────────────────────
+        function clearAll() {
+            if (!confirm('Limpar todos os campos?')) return;
+            ['f-data-inicio','f-data-conclusao','f-endereco','f-numero','f-condominio',
+             'f-caixa-m','f-node','f-area','f-prumadas','f-dio','f-nap','f-andares','f-hp','f-obs']
+             .forEach(id => { document.getElementById(id).value = ''; });
+            document.getElementById('f-data-inicio').value = today;
+            setHFC('');
+            hfcValue = '';
+            document.getElementById('hfc-sim').className = 'toggle-btn';
+            document.getElementById('hfc-nao').className = 'toggle-btn';
+            updateSubtitle();
+            showToast('🗑 Campos limpos!');
+        }
+
+        // ── GPS ───────────────────────────────────────────
+        function getGeo() {
+            if (!navigator.geolocation) { showToast('GPS não disponível.'); return; }
+            showToast('📍 Buscando localização...');
+            navigator.geolocation.getCurrentPosition(async pos => {
+                try {
+                    const r = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}&addressdetails=1`);
+                    const d = await r.json();
+                    if (d.address) {
+                        const a = d.address;
+                        document.getElementById('f-endereco').value = a.road || a.pedestrian || '';
+                        document.getElementById('f-numero').value = a.house_number || 'S/N';
+                        updateSubtitle();
+                        showToast('✅ Endereço preenchido!');
+                    }
+                } catch(e) { showToast('Erro ao obter endereço.'); }
+            }, () => showToast('Permissão de GPS negada.'));
+        }
+
+        // ── Toast ─────────────────────────────────────────
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.className = 'show';
+            setTimeout(() => t.className = '', 3000);
+        }
+    </script>
 </body>
 </html>
