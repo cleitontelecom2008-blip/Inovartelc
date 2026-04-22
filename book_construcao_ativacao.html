@@ -16,223 +16,119 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-
         * { font-family: 'Inter', sans-serif; box-sizing: border-box; }
-
         body { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%); min-height: 100vh; }
 
         .field-input {
-            border: 1.5px solid #cbd5e1;
-            border-radius: 0.5rem;
-            padding: 0.55rem 0.75rem;
-            width: 100%;
-            background: #f8fafc;
-            color: #1e293b;
-            font-size: 0.875rem;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            outline: none;
+            border: 1.5px solid #cbd5e1; border-radius: 0.5rem;
+            padding: 0.55rem 0.75rem; width: 100%;
+            background: #f8fafc; color: #1e293b; font-size: 0.875rem;
+            transition: border-color 0.2s, box-shadow 0.2s; outline: none;
         }
-        .field-input:focus {
-            border-color: #f59e0b;
-            box-shadow: 0 0 0 3px rgba(245,158,11,0.15);
-            background: #fff;
-        }
+        .field-input:focus { border-color: #f59e0b; box-shadow: 0 0 0 3px rgba(245,158,11,0.15); background: #fff; }
 
-        .card {
-            background: #fff;
-            padding: 1.25rem 1.5rem;
-            border-radius: 1rem;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-            margin-bottom: 1rem;
-            border: 1px solid #e2e8f0;
-        }
+        .card { background: #fff; padding: 1.25rem 1.5rem; border-radius: 1rem; box-shadow: 0 2px 12px rgba(0,0,0,0.08); margin-bottom: 1rem; border: 1px solid #e2e8f0; }
+        .card-header { display: flex; align-items: center; gap: 0.5rem; border-bottom: 2px solid #f1f5f9; margin-bottom: 1rem; padding-bottom: 0.6rem; }
+        .card-title { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #475569; }
+        .label { display: block; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #94a3b8; margin-bottom: 0.25rem; }
+        .sec-num { background: #fbbf24; color: #78350f; font-size: 0.65rem; font-weight: 800; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 
-        .card-header {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            border-bottom: 2px solid #f1f5f9;
-            margin-bottom: 1rem;
-            padding-bottom: 0.6rem;
-        }
-        .card-header-dot {
-            width: 10px; height: 10px; border-radius: 50%;
-            flex-shrink: 0;
-        }
-        .card-title {
-            font-size: 0.75rem;
-            font-weight: 700;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            color: #475569;
-        }
+        /* Toggle buttons */
+        .toggle-group { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+        .toggle-btn { padding: 0.45rem 0.75rem; border-radius: 0.5rem; font-size: 0.78rem; font-weight: 700; cursor: pointer; border: 2px solid #e2e8f0; background: #f8fafc; color: #94a3b8; transition: all 0.15s; }
+        .t-green  { background:#dcfce7; border-color:#16a34a; color:#15803d; }
+        .t-red    { background:#fee2e2; border-color:#dc2626; color:#b91c1c; }
+        .t-yellow { background:#fef9c3; border-color:#ca8a04; color:#854d0e; }
+        .t-blue   { background:#dbeafe; border-color:#2563eb; color:#1d4ed8; }
+        .t-orange { background:#ffedd5; border-color:#ea580c; color:#c2410c; }
 
-        .label {
-            display: block;
-            font-size: 0.7rem;
-            font-weight: 700;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-            color: #94a3b8;
-            margin-bottom: 0.25rem;
-        }
-
-        /* HFC Toggle */
-        .toggle-group { display: flex; gap: 0.5rem; }
-        .toggle-btn {
-            flex: 1;
-            padding: 0.55rem;
-            border-radius: 0.5rem;
-            font-size: 0.8rem;
-            font-weight: 700;
-            cursor: pointer;
-            border: 2px solid #e2e8f0;
-            background: #f8fafc;
-            color: #94a3b8;
-            transition: all 0.15s;
-        }
-        .toggle-btn.active-sim {
-            background: #dcfce7; border-color: #16a34a; color: #15803d;
-        }
-        .toggle-btn.active-nao {
-            background: #fee2e2; border-color: #dc2626; color: #b91c1c;
-        }
-
-        /* Gold Header */
-        .gold-header {
-            background: linear-gradient(135deg, #92400e, #d97706, #fbbf24, #d97706, #92400e);
-            background-size: 200% 100%;
-            animation: shimmer 3s linear infinite;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-        }
-
-        /* Book logo glow */
-        .logo-wrap {
-            display: flex; flex-direction: column; align-items: center;
-            gap: 0.25rem; margin-bottom: 1.5rem;
-        }
-        .logo-badge {
-            background: linear-gradient(135deg, #78350f, #d97706);
-            color: #fef3c7;
-            font-size: 0.65rem;
-            font-weight: 800;
-            letter-spacing: 0.15em;
-            padding: 0.2rem 0.75rem;
-            border-radius: 99px;
-            text-transform: uppercase;
-        }
+        /* Gold header */
+        .gold-header { background: linear-gradient(135deg,#92400e,#d97706,#fbbf24,#d97706,#92400e); background-size:200% 100%; animation:shimmer 3s linear infinite; -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+        @keyframes shimmer { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
+        .logo-wrap { display:flex; flex-direction:column; align-items:center; gap:0.25rem; margin-bottom:1.5rem; }
+        .logo-badge { background:linear-gradient(135deg,#78350f,#d97706); color:#fef3c7; font-size:0.65rem; font-weight:800; letter-spacing:0.15em; padding:0.2rem 0.75rem; border-radius:99px; text-transform:uppercase; }
 
         /* Action buttons */
-        .action-btn {
-            display: flex; align-items: center; gap: 0.4rem;
-            padding: 0.55rem 1rem;
-            border-radius: 0.6rem;
-            font-size: 0.8rem; font-weight: 700;
-            cursor: pointer; border: none;
-            transition: all 0.15s; box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-        }
-        .btn-whats { background: #16a34a; color: #fff; }
-        .btn-whats:hover { background: #15803d; }
-        .btn-print { background: #7c3aed; color: #fff; }
-        .btn-print:hover { background: #6d28d9; }
-        .btn-excel { background: #0369a1; color: #fff; }
-        .btn-excel:hover { background: #075985; }
-        .btn-clear { background: #dc2626; color: #fff; }
-        .btn-clear:hover { background: #b91c1c; }
+        .action-btn { display:flex; align-items:center; gap:0.4rem; padding:0.55rem 1rem; border-radius:0.6rem; font-size:0.8rem; font-weight:700; cursor:pointer; border:none; transition:all 0.15s; box-shadow:0 2px 6px rgba(0,0,0,0.15); }
+        .btn-whats { background:#16a34a; color:#fff; } .btn-whats:hover { background:#15803d; }
+        .btn-print { background:#7c3aed; color:#fff; } .btn-print:hover { background:#6d28d9; }
+        .btn-excel { background:#0369a1; color:#fff; } .btn-excel:hover { background:#075985; }
+        .btn-clear { background:#dc2626; color:#fff; } .btn-clear:hover { background:#b91c1c; }
 
         /* Toast */
-        #toast {
-            visibility: hidden;
-            min-width: 180px;
-            background: rgba(15,23,42,0.95);
-            color: #fef3c7;
-            font-weight: 600;
-            font-size: 0.85rem;
-            text-align: center;
-            border-radius: 12px;
-            padding: 14px 20px;
-            position: fixed;
-            z-index: 200;
-            left: 50%;
-            transform: translateX(-50%);
-            bottom: 30px;
-            border: 1px solid #d97706;
-        }
-        #toast.show {
-            visibility: visible;
-            animation: fadein 0.4s, fadeout 0.5s 2.5s;
-        }
-        @keyframes fadein { from { bottom: 0; opacity: 0; } to { bottom: 30px; opacity: 1; } }
-        @keyframes fadeout { from { bottom: 30px; opacity: 1; } to { bottom: 0; opacity: 0; } }
+        #toast { visibility:hidden; min-width:180px; background:rgba(15,23,42,0.95); color:#fef3c7; font-weight:600; font-size:0.85rem; text-align:center; border-radius:12px; padding:14px 20px; position:fixed; z-index:200; left:50%; transform:translateX(-50%); bottom:30px; border:1px solid #d97706; }
+        #toast.show { visibility:visible; animation:fadein 0.4s, fadeout 0.5s 2.5s; }
+        @keyframes fadein { from{bottom:0;opacity:0} to{bottom:30px;opacity:1} }
+        @keyframes fadeout { from{bottom:30px;opacity:1} to{bottom:0;opacity:0} }
 
-        /* Print mode */
-        .printing-mode .field-input {
-            border: none !important;
-            background: transparent !important;
-            font-weight: 700;
-            color: #1e293b;
-            padding-left: 0;
-        }
-        .printing-mode .toggle-btn { border-width: 1px; }
+        .printing-mode .field-input { border:none!important; background:transparent!important; font-weight:700; color:#1e293b; padding-left:0; }
+        .req { color:#f59e0b; }
 
-        /* Required asterisk */
-        .req { color: #f59e0b; }
+        /* Signal badge */
+        .signal-unit { font-size:0.7rem; color:#64748b; font-weight:600; align-self:center; padding-top:1.3rem; }
 
-        /* Section number badge */
-        .sec-num {
-            background: #fbbf24;
-            color: #78350f;
-            font-size: 0.65rem;
-            font-weight: 800;
-            width: 20px; height: 20px;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0;
-        }
-
-        @media print {
-            .no-print { display: none !important; }
-            body { background: #fff; }
-            .card { box-shadow: none; border: 1px solid #ccc; }
-        }
+        /* Pendencias list */
+        #pendencias-list .pend-item { display:flex; align-items:center; gap:0.5rem; padding:0.4rem; background:#fef2f2; border-radius:0.4rem; border:1px solid #fecaca; font-size:0.82rem; color:#dc2626; font-weight:600; }
+        #pendencias-list .pend-item button { margin-left:auto; color:#dc2626; background:none; border:none; cursor:pointer; font-size:1rem; }
     </style>
 </head>
 <body class="p-4 md:p-8">
+<div id="toast"></div>
+<div class="max-w-2xl mx-auto">
 
-    <div id="toast">✓ Operação realizada!</div>
+    <!-- HEADER -->
+    <div class="logo-wrap no-print">
+        <div style="font-size:2.5rem;font-weight:900;letter-spacing:-1px;" class="gold-header">BOOK</div>
+        <div class="logo-badge">Inovar Telecom · Equipe MDU</div>
+    </div>
 
-    <div class="max-w-2xl mx-auto">
+    <div id="capture-area" class="space-y-3">
 
-        <!-- ====== HEADER ====== -->
-        <div class="logo-wrap no-print">
-            <div style="font-size:2.5rem; font-weight:900; letter-spacing:-1px;" class="gold-header">BOOK</div>
-            <div class="logo-badge">Inovar Telecom · Equipe MDU</div>
+        <!-- TÍTULO -->
+        <div class="card" style="background:linear-gradient(135deg,#1e3a5f,#0f172a);border-color:#334155;">
+            <div class="text-center">
+                <p class="text-xs font-bold tracking-widest text-amber-400 mb-1">CARIMBO DIGITAL</p>
+                <h1 class="text-xl font-black text-white tracking-wide">CONSTRUÇÃO <span class="text-amber-400">/</span> ATIVAÇÃO</h1>
+                <p id="header-subtitle" class="text-slate-400 text-xs mt-1 font-medium">Preencha os dados abaixo</p>
+            </div>
         </div>
 
-        <div id="capture-area" class="space-y-3">
-
-            <!-- TÍTULO DO CARIMBO -->
-            <div class="card" style="background: linear-gradient(135deg,#1e3a5f,#0f172a); border-color:#334155;">
-                <div class="text-center">
-                    <p class="text-xs font-bold tracking-widest text-amber-400 mb-1">CARIMBO DIGITAL</p>
-                    <h1 class="text-xl font-black text-white tracking-wide">CONSTRUÇÃO <span class="text-amber-400">/</span> ATIVAÇÃO</h1>
-                    <p id="header-subtitle" class="text-slate-400 text-xs mt-1 font-medium"></p>
-                </div>
+        <!-- 1. IDENTIFICAÇÃO -->
+        <div class="card">
+            <div class="card-header">
+                <div class="sec-num">1</div>
+                <span class="card-title" style="color:#7c3aed;">Identificação do Serviço</span>
             </div>
-
-            <!-- 1. DATAS -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="sec-num">1</div>
-                    <span class="card-title" style="color:#d97706;">Datas do Serviço</span>
+            <div class="space-y-3">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="label">Técnico Responsável <span class="req">*</span></label>
+                        <input class="field-input" type="text" id="f-tecnico" placeholder="Nome do técnico">
+                    </div>
+                    <div>
+                        <label class="label">Protocolo / OS</label>
+                        <input class="field-input" type="text" id="f-os" placeholder="Nº da OS">
+                    </div>
                 </div>
-                <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="label">Tipo de Serviço</label>
+                    <div class="toggle-group" id="tipo-grupo">
+                        <button class="toggle-btn" onclick="setToggle('tipo','CONSTRUÇÃO',this,'t-blue')">🏗 CONSTRUÇÃO</button>
+                        <button class="toggle-btn" onclick="setToggle('tipo','ATIVAÇÃO',this,'t-green')">✅ ATIVAÇÃO</button>
+                        <button class="toggle-btn" onclick="setToggle('tipo','AMBOS',this,'t-orange')">⚡ AMBOS</button>
+                    </div>
+                    <input type="hidden" id="f-tipo" value="">
+                </div>
+                <div>
+                    <label class="label">Status do Serviço</label>
+                    <div class="toggle-group" id="status-grupo">
+                        <button class="toggle-btn" onclick="setToggle('status','CONCLUÍDO',this,'t-green')">✅ CONCLUÍDO</button>
+                        <button class="toggle-btn" onclick="setToggle('status','PARCIAL',this,'t-yellow')">⚠️ PARCIAL</button>
+                        <button class="toggle-btn" onclick="setToggle('status','PENDENTE',this,'t-red')">🔴 PENDENTE</button>
+                    </div>
+                    <input type="hidden" id="f-status" value="">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="label">Data Início <span class="req">*</span></label>
                         <input class="field-input" type="date" id="f-data-inicio">
@@ -243,335 +139,480 @@
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- 2. LOCALIZAÇÃO -->
-            <div class="card">
-                <div class="card-header" style="justify-content:space-between;">
-                    <div style="display:flex;align-items:center;gap:0.5rem;">
-                        <div class="sec-num">2</div>
-                        <span class="card-title" style="color:#0369a1;">Localização</span>
-                    </div>
-                    <button onclick="getGeo()" class="no-print action-btn" style="background:#0369a1;color:#fff;font-size:0.7rem;padding:0.3rem 0.7rem;">
-                        📍 GPS
-                    </button>
+        <!-- 2. LOCALIZAÇÃO -->
+        <div class="card">
+            <div class="card-header" style="justify-content:space-between;">
+                <div style="display:flex;align-items:center;gap:0.5rem;">
+                    <div class="sec-num">2</div>
+                    <span class="card-title" style="color:#0369a1;">Localização</span>
                 </div>
-                <div class="space-y-3">
+                <button onclick="getGeo()" class="no-print action-btn" style="background:#0369a1;color:#fff;font-size:0.7rem;padding:0.3rem 0.7rem;">📍 GPS</button>
+            </div>
+            <div class="space-y-3">
+                <div>
+                    <label class="label">Endereço (Rua) <span class="req">*</span></label>
+                    <input class="field-input" type="text" id="f-endereco" placeholder="Nome da rua...">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="label">Endereço (Rua) <span class="req">*</span></label>
-                        <input class="field-input" type="text" id="f-endereco" placeholder="Nome da rua...">
+                        <label class="label">Número</label>
+                        <input class="field-input" type="text" id="f-numero" placeholder="Ex: 10 ou S/N">
                     </div>
+                    <div>
+                        <label class="label">Condomínio / Edifício</label>
+                        <input class="field-input" type="text" id="f-condominio" placeholder="Nome do cond.">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. INFRAESTRUTURA -->
+        <div class="card">
+            <div class="card-header">
+                <div class="sec-num">3</div>
+                <span class="card-title" style="color:#d97706;">Infraestrutura de Rede</span>
+            </div>
+            <div class="space-y-3">
+                <div>
+                    <label class="label">Possui HFC?</label>
+                    <div class="toggle-group" id="hfc-grupo">
+                        <button class="toggle-btn" onclick="setToggle('hfc','SIM',this,'t-green')">✅ SIM</button>
+                        <button class="toggle-btn" onclick="setToggle('hfc','NÃO',this,'t-red')">❌ NÃO</button>
+                    </div>
+                    <input type="hidden" id="f-hfc" value="">
+                </div>
+                <div class="grid grid-cols-3 gap-3">
+                    <div>
+                        <label class="label">Caixa M</label>
+                        <input class="field-input" type="text" id="f-caixa-m" placeholder="Ex: M10">
+                    </div>
+                    <div>
+                        <label class="label">Node</label>
+                        <input class="field-input" type="text" id="f-node" placeholder="Ex: N-47">
+                    </div>
+                    <div>
+                        <label class="label">Área</label>
+                        <input class="field-input" type="text" id="f-area" placeholder="Ex: A4">
+                    </div>
+                </div>
+                <div class="grid grid-cols-3 gap-3">
+                    <div>
+                        <label class="label">DIO</label>
+                        <input class="field-input" type="text" id="f-dio" placeholder="Ex: DIO-02">
+                    </div>
+                    <div>
+                        <label class="label">NAP</label>
+                        <input class="field-input" type="text" id="f-nap" placeholder="Ex: NAP-05">
+                    </div>
+                    <div>
+                        <label class="label">Qtd. Prumadas</label>
+                        <input class="field-input" type="number" id="f-prumadas" placeholder="0" min="0">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="label">Andares</label>
+                        <input class="field-input" type="number" id="f-andares" placeholder="0" min="0">
+                    </div>
+                    <div>
+                        <label class="label">Qtd. HP</label>
+                        <input class="field-input" type="number" id="f-hp" placeholder="0" min="0">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. DADOS TÉCNICOS -->
+        <div class="card">
+            <div class="card-header">
+                <div class="sec-num">4</div>
+                <span class="card-title" style="color:#0f766e;">Dados Técnicos Detalhados</span>
+            </div>
+            <div class="space-y-3">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="label">UMs Passadas (Total)</label>
+                        <input class="field-input" type="number" id="f-ums-total" placeholder="0" min="0">
+                    </div>
+                    <div>
+                        <label class="label">UMs Ativadas</label>
+                        <input class="field-input" type="number" id="f-ums-ativas" placeholder="0" min="0">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="label">Portas Disponíveis</label>
+                        <input class="field-input" type="number" id="f-portas-total" placeholder="0" min="0">
+                    </div>
+                    <div>
+                        <label class="label">Portas Utilizadas</label>
+                        <input class="field-input" type="number" id="f-portas-usadas" placeholder="0" min="0">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="label">Tipo de Cabo</label>
+                        <input class="field-input" type="text" id="f-cabo-tipo" placeholder="Ex: FO 12FO, Drop">
+                    </div>
+                    <div>
+                        <label class="label">Metragem (m)</label>
+                        <input class="field-input" type="number" id="f-cabo-metro" placeholder="0" min="0">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="label">Tipo de Splitter</label>
+                        <input class="field-input" type="text" id="f-splitter-tipo" placeholder="Ex: 1x8, 1x16">
+                    </div>
+                    <div>
+                        <label class="label">Qtd. Splitters</label>
+                        <input class="field-input" type="number" id="f-splitter-qtd" placeholder="0" min="0">
+                    </div>
+                </div>
+
+                <!-- Nível de Sinal -->
+                <div style="background:#f0fdf4;border-radius:0.6rem;padding:0.75rem;border:1px solid #bbf7d0;">
+                    <p class="text-xs font-bold text-green-800 uppercase tracking-wider mb-2">📶 Nível de Sinal (dBm)</p>
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="label">Número</label>
-                            <input class="field-input" type="text" id="f-numero" placeholder="Ex: 123 ou S/N">
+                            <label class="label">Downstream (RX)</label>
+                            <div style="display:flex;align-items:center;gap:0.4rem;">
+                                <input class="field-input" type="number" step="0.1" id="f-sinal-rx" placeholder="-20.0">
+                                <span class="signal-unit">dBm</span>
+                            </div>
                         </div>
                         <div>
-                            <label class="label">Condomínio / Edifício</label>
-                            <input class="field-input" type="text" id="f-condominio" placeholder="Nome do cond.">
+                            <label class="label">Upstream (TX)</label>
+                            <div style="display:flex;align-items:center;gap:0.4rem;">
+                                <input class="field-input" type="number" step="0.1" id="f-sinal-tx" placeholder="+2.0">
+                                <span class="signal-unit">dBm</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <label class="label">Atenuação Total (dB)</label>
+                        <div style="display:flex;align-items:center;gap:0.4rem;">
+                            <input class="field-input" type="number" step="0.1" id="f-atenuacao" placeholder="0.0">
+                            <span class="signal-unit">dB</span>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <!-- 3. DADOS TÉCNICOS -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="sec-num">3</div>
-                    <span class="card-title" style="color:#7c3aed;">Dados Técnicos</span>
-                </div>
-                <div class="space-y-4">
-
-                    <!-- HFC -->
-                    <div>
-                        <label class="label">Possui HFC?</label>
-                        <div class="toggle-group">
-                            <button class="toggle-btn" id="hfc-sim" onclick="setHFC('SIM')">✅ SIM</button>
-                            <button class="toggle-btn" id="hfc-nao" onclick="setHFC('NÃO')">❌ NÃO</button>
-                        </div>
-                        <input type="hidden" id="f-hfc" value="">
-                    </div>
-
-                    <!-- Caixa M / Node / Área -->
-                    <div class="grid grid-cols-3 gap-3">
-                        <div>
-                            <label class="label">Caixa M</label>
-                            <input class="field-input" type="text" id="f-caixa-m" placeholder="Ex: M01">
-                        </div>
-                        <div>
-                            <label class="label">Node</label>
-                            <input class="field-input" type="text" id="f-node" placeholder="Ex: N-47">
-                        </div>
-                        <div>
-                            <label class="label">Área</label>
-                            <input class="field-input" type="text" id="f-area" placeholder="Ex: A3">
-                        </div>
-                    </div>
-
-                    <!-- DIO / NAP / Prumadas -->
-                    <div class="grid grid-cols-3 gap-3">
-                        <div>
-                            <label class="label">DIO</label>
-                            <input class="field-input" type="text" id="f-dio" placeholder="Ex: DIO-02">
-                        </div>
-                        <div>
-                            <label class="label">NAP</label>
-                            <input class="field-input" type="text" id="f-nap" placeholder="Ex: NAP-05">
-                        </div>
-                        <div>
-                            <label class="label">Qtd. Prumadas</label>
-                            <input class="field-input" type="number" id="f-prumadas" placeholder="0" min="0">
-                        </div>
-                    </div>
-
-                    <!-- Andares / HP -->
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="label">Quantos Andares</label>
-                            <input class="field-input" type="number" id="f-andares" placeholder="0" min="0">
-                        </div>
-                        <div>
-                            <label class="label">Quantos HP</label>
-                            <input class="field-input" type="number" id="f-hp" placeholder="0" min="0">
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <!-- 4. OBSERVAÇÃO -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="sec-num">4</div>
-                    <span class="card-title" style="color:#dc2626;">Observações</span>
-                </div>
-                <textarea class="field-input" id="f-obs" rows="4" placeholder="Descreva ocorrências, pendências ou informações adicionais..." style="resize:vertical;"></textarea>
-            </div>
-
-        </div>
-        <!-- end capture-area -->
-
-        <!-- ====== ACTIONS ====== -->
-        <div class="flex flex-wrap justify-center gap-3 mt-6 mb-4 no-print">
-            <button onclick="copyWhatsApp()" class="action-btn btn-whats">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                WhatsApp
-            </button>
-            <button onclick="takeScreenshot()" class="action-btn btn-print">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><circle cx="12" cy="13" r="3" stroke="currentColor" stroke-width="2" fill="none"/></svg>
-                Gerar Print
-            </button>
-            <button onclick="exportExcel()" class="action-btn btn-excel">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                Excel
-            </button>
-            <button onclick="clearAll()" class="action-btn btn-clear">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                Limpar
-            </button>
         </div>
 
-        <footer class="text-center text-slate-500 text-xs pb-10 no-print">
-            Inovar Telecom · Equipe MDU · Book Construção/Ativação
-        </footer>
+        <!-- 5. PENDÊNCIAS -->
+        <div class="card">
+            <div class="card-header">
+                <div class="sec-num">5</div>
+                <span class="card-title" style="color:#dc2626;">Pendências</span>
+            </div>
+            <div id="pendencias-list" class="space-y-2 mb-3"></div>
+            <div class="flex gap-2 no-print">
+                <input class="field-input" type="text" id="new-pend" placeholder="Descreva a pendência...">
+                <button onclick="addPend()" style="background:#dc2626;color:#fff;border:none;border-radius:0.5rem;padding:0.5rem 0.85rem;font-weight:700;cursor:pointer;white-space:nowrap;">+ Add</button>
+            </div>
+        </div>
+
+        <!-- 6. OBSERVAÇÃO -->
+        <div class="card">
+            <div class="card-header">
+                <div class="sec-num">6</div>
+                <span class="card-title" style="color:#475569;">Observações Técnicas</span>
+            </div>
+            <textarea class="field-input" id="f-obs" rows="4" placeholder="Descreva ocorrências, materiais extras, condições do local..." style="resize:vertical;"></textarea>
+        </div>
+
+    </div><!-- end capture-area -->
+
+    <!-- ACTIONS -->
+    <div class="flex flex-wrap justify-center gap-3 mt-6 mb-4 no-print">
+        <button onclick="copyWhatsApp()" class="action-btn btn-whats">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            WhatsApp
+        </button>
+        <button onclick="takeScreenshot()" class="action-btn btn-print">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><circle cx="12" cy="13" r="3" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+            Gerar Print
+        </button>
+        <button onclick="exportExcel()" class="action-btn btn-excel">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            Excel
+        </button>
+        <button onclick="clearAll()" class="action-btn btn-clear">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            Limpar
+        </button>
     </div>
 
-    <!-- ====== MODAL SCREENSHOT ====== -->
-    <div id="screenshot-modal" class="fixed inset-0 bg-black bg-opacity-85 hidden z-50 flex flex-col items-center justify-center p-4">
-        <div class="bg-white p-4 rounded-2xl max-w-full max-h-[90vh] overflow-auto flex flex-col items-center relative shadow-2xl">
-            <button onclick="closeModal()" class="absolute top-3 right-3 text-gray-400 hover:text-black">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-            </button>
-            <h3 class="text-base font-black mb-1 text-gray-800">📋 Carimbo Gerado</h3>
-            <p class="text-xs text-amber-600 mb-3 font-medium">Pressione a imagem para guardar ou partilhar.</p>
-            <div id="screenshot-container" class="mb-4 shadow border rounded-lg overflow-hidden"></div>
-            <button onclick="closeModal()" class="bg-slate-800 text-white px-8 py-2 rounded-lg font-bold text-sm">Fechar</button>
-        </div>
+    <footer class="text-center text-slate-500 text-xs pb-10 no-print">
+        Inovar Telecom · Equipe MDU · Book Construção/Ativação
+    </footer>
+</div>
+
+<!-- MODAL SCREENSHOT -->
+<div id="screenshot-modal" class="fixed inset-0 bg-black bg-opacity-85 hidden z-50 flex flex-col items-center justify-center p-4">
+    <div class="bg-white p-4 rounded-2xl max-w-full max-h-[90vh] overflow-auto flex flex-col items-center relative shadow-2xl">
+        <button onclick="closeModal()" class="absolute top-3 right-3 text-gray-400 hover:text-black">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+        <h3 class="text-base font-black mb-1 text-gray-800">📋 Carimbo Gerado</h3>
+        <p class="text-xs text-amber-600 mb-3 font-medium">Pressione a imagem para guardar ou partilhar.</p>
+        <div id="screenshot-container" class="mb-4 shadow border rounded-lg overflow-hidden"></div>
+        <button onclick="closeModal()" class="bg-slate-800 text-white px-8 py-2 rounded-lg font-bold text-sm">Fechar</button>
     </div>
+</div>
 
-    <script>
-        // ── Service Worker ──────────────────────────────
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('./sw.js').catch(() => {});
-        }
+<script>
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+}
 
-        // ── Init dates ──────────────────────────────────
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('f-data-inicio').value = today;
+const today = new Date().toISOString().split('T')[0];
+document.getElementById('f-data-inicio').value = today;
 
-        // ── HFC toggle ──────────────────────────────────
-        let hfcValue = '';
-        function setHFC(val) {
-            hfcValue = val;
-            document.getElementById('f-hfc').value = val;
-            document.getElementById('hfc-sim').className = 'toggle-btn' + (val === 'SIM' ? ' active-sim' : '');
-            document.getElementById('hfc-nao').className = 'toggle-btn' + (val === 'NÃO' ? ' active-nao' : '');
-        }
-
-        // ── Helpers ─────────────────────────────────────
-        const gv = id => (document.getElementById(id)?.value || '').trim() || '—';
-        const fmtDate = id => {
-            const v = document.getElementById(id)?.value;
-            if (!v) return '—';
-            const [y, m, d] = v.split('-');
-            return `${d}/${m}/${y}`;
-        };
-
-        // Update subtitle live
-        function updateSubtitle() {
-            const end = gv('f-endereco');
-            const cond = gv('f-condominio');
-            let sub = end !== '—' ? end : '';
-            if (cond !== '—') sub += (sub ? ' · ' : '') + cond;
-            document.getElementById('header-subtitle').textContent = sub || 'Preencha os dados abaixo';
-        }
-        ['f-endereco','f-condominio'].forEach(id => {
-            document.getElementById(id).addEventListener('input', updateSubtitle);
+// ── Toggle genérico ──────────────────────────────────
+const toggleState = {};
+function setToggle(group, value, btn, cls) {
+    toggleState[group] = value;
+    document.getElementById('f-' + group).value = value;
+    const grpEl = document.getElementById(group + '-grupo');
+    if (grpEl) {
+        grpEl.querySelectorAll('.toggle-btn').forEach(b => {
+            b.className = 'toggle-btn';
         });
-        updateSubtitle();
+    }
+    btn.classList.add(cls);
+}
 
-        // ── WhatsApp ─────────────────────────────────────
-        function copyWhatsApp() {
-            const hfc = hfcValue || '—';
-            let text = `📋 *CARIMBO – CONSTRUÇÃO / ATIVAÇÃO*\n`;
-            text += `━━━━━━━━━━━━━━━━━━━━\n`;
-            text += `📅 *DATA INÍCIO:* ${fmtDate('f-data-inicio')}\n`;
-            text += `📅 *DATA CONCLUSÃO:* ${fmtDate('f-data-conclusao')}\n`;
-            text += `━━━━━━━━━━━━━━━━━━━━\n`;
-            text += `📍 *ENDEREÇO:* ${gv('f-endereco')}\n`;
-            text += `🔢 *NÚMERO:* ${gv('f-numero')}\n`;
-            text += `🏢 *CONDOMÍNIO:* ${gv('f-condominio')}\n`;
-            text += `━━━━━━━━━━━━━━━━━━━━\n`;
-            text += `📡 *POSSUI HFC:* ${hfc}\n`;
-            text += `📦 *CAIXA M:* ${gv('f-caixa-m')}\n`;
-            text += `🔗 *NODE:* ${gv('f-node')}\n`;
-            text += `🗺 *ÁREA:* ${gv('f-area')}\n`;
-            text += `━━━━━━━━━━━━━━━━━━━━\n`;
-            text += `🔢 *QTD. PRUMADAS:* ${gv('f-prumadas')}\n`;
-            text += `🔌 *DIO:* ${gv('f-dio')}\n`;
-            text += `📌 *NAP:* ${gv('f-nap')}\n`;
-            text += `🏗 *ANDARES:* ${gv('f-andares')}\n`;
-            text += `⚡ *HP:* ${gv('f-hp')}\n`;
-            const obs = gv('f-obs');
-            if (obs !== '—') {
-                text += `━━━━━━━━━━━━━━━━━━━━\n`;
-                text += `📝 *OBSERVAÇÃO:*\n${obs}\n`;
+// ── Subtitle update ──────────────────────────────────
+function updateSubtitle() {
+    const end = document.getElementById('f-endereco').value.trim();
+    const cond = document.getElementById('f-condominio').value.trim();
+    let sub = end || '';
+    if (cond) sub += (sub ? ' · ' : '') + cond;
+    document.getElementById('header-subtitle').textContent = sub || 'Preencha os dados abaixo';
+}
+['f-endereco','f-condominio'].forEach(id => document.getElementById(id).addEventListener('input', updateSubtitle));
+updateSubtitle();
+
+// ── Pendências ───────────────────────────────────────
+let pendencias = [];
+function addPend() {
+    const inp = document.getElementById('new-pend');
+    const val = inp.value.trim();
+    if (!val) return;
+    pendencias.push(val);
+    inp.value = '';
+    renderPend();
+}
+document.getElementById('new-pend').addEventListener('keydown', e => { if (e.key === 'Enter') addPend(); });
+function removePend(i) { pendencias.splice(i, 1); renderPend(); }
+function renderPend() {
+    const el = document.getElementById('pendencias-list');
+    el.innerHTML = pendencias.length === 0
+        ? '<p class="text-xs text-gray-400 italic">Nenhuma pendência registrada.</p>'
+        : pendencias.map((p, i) => `<div class="pend-item">⚠️ ${p}<button onclick="removePend(${i})">✕</button></div>`).join('');
+}
+renderPend();
+
+// ── Helpers ──────────────────────────────────────────
+const gv  = id => (document.getElementById(id)?.value || '').trim() || '—';
+const gvn = id => (document.getElementById(id)?.value || '').trim(); // sem fallback
+const fmtDate = id => { const v=document.getElementById(id)?.value; if(!v) return '—'; const[y,m,d]=v.split('-'); return `${d}/${m}/${y}`; };
+const line = (emoji, label, val) => val && val !== '—' ? `${emoji} *${label}:* ${val}\n` : '';
+
+// ── WhatsApp ─────────────────────────────────────────
+function copyWhatsApp() {
+    const hfc    = toggleState.hfc    || '—';
+    const tipo   = toggleState.tipo   || '—';
+    const status = toggleState.status || '—';
+
+    // Porcentagem UMs
+    const umsT = gvn('f-ums-total');
+    const umsA = gvn('f-ums-ativas');
+    const umsPct = (umsT && umsA && +umsT > 0) ? ` (${Math.round(+umsA/+umsT*100)}%)` : '';
+
+    // Portas
+    const pT = gvn('f-portas-total');
+    const pU = gvn('f-portas-usadas');
+    const portasStr = (pT || pU) ? `${pU||'—'}/${pT||'—'}` : '—';
+
+    // Sinal
+    const rx  = gvn('f-sinal-rx');
+    const tx  = gvn('f-sinal-tx');
+    const atu = gvn('f-atenuacao');
+
+    // Cabo
+    const caboT = gvn('f-cabo-tipo');
+    const caboM = gvn('f-cabo-metro');
+    const caboStr = [caboT, caboM ? caboM+'m' : ''].filter(Boolean).join(' · ') || '—';
+
+    // Splitter
+    const splT = gvn('f-splitter-tipo');
+    const splQ = gvn('f-splitter-qtd');
+    const splStr = [splT, splQ ? splQ+'un' : ''].filter(Boolean).join(' × ') || '—';
+
+    // Status emoji
+    const statusEmoji = { 'CONCLUÍDO':'✅', 'PARCIAL':'⚠️', 'PENDENTE':'🔴' }[status] || '📋';
+
+    let t = '';
+    t += `📋 CARIMBO – CONSTRUÇÃO / ATIVAÇÃO\n`;
+    t += `━━━━━━━━━━━━━━━━━━━━\n`;
+    t += line('📅','DATA INÍCIO', fmtDate('f-data-inicio'));
+    t += line('📅','DATA CONCLUSÃO', fmtDate('f-data-conclusao'));
+    t += `━━━━━━━━━━━━━━━━━━━━\n`;
+    t += line('📍','ENDEREÇO', gv('f-endereco'));
+    t += line('🔢','NÚMERO', gv('f-numero'));
+    t += line('🏢','CONDOMÍNIO', gv('f-condominio'));
+    t += `━━━━━━━━━━━━━━━━━━━━\n`;
+    t += line('📡','POSSUI HFC', hfc);
+    t += line('📦','CAIXA M', gv('f-caixa-m'));
+    t += line('🔗','NODE', gv('f-node'));
+    t += line('🗺','ÁREA', gv('f-area'));
+    t += `━━━━━━━━━━━━━━━━━━━━\n`;
+    t += line('🔢','QTD. PRUMADAS', gv('f-prumadas'));
+    t += line('🔌','DIO', gv('f-dio'));
+    t += line('📌','NAP', gv('f-nap'));
+    t += line('🏗','ANDARES', gv('f-andares'));
+    t += line('⚡','HP', gv('f-hp'));
+    t += `━━━━━━━━━━━━━━━━━━━━\n`;
+    if (gvn('f-tecnico'))       t += `👷 TÉCNICO: ${gv('f-tecnico')}\n`;
+    if (gvn('f-os'))            t += `📄 OS / PROTOCOLO: ${gv('f-os')}\n`;
+    if (tipo !== '—')           t += `🔧 TIPO DE SERVIÇO: ${tipo}\n`;
+    if (status !== '—')         t += `📊 STATUS: ${status}\n`;
+    if (umsT || umsA)           t += `🏘 UMs: ${umsA||'—'}/${umsT||'—'} ativadas${umsPct}\n`;
+    if (pT || pU)               t += `🔌 PORTAS: ${portasStr} utilizadas\n`;
+    if (caboStr !== '—')        t += `🔶 CABO: ${caboStr}\n`;
+    if (splStr !== '—')         t += `🔀 SPLITTER: ${splStr}\n`;
+    if (rx || tx || atu) {
+        t += `📶 NÍVEL DE SINAL:\n`;
+        if (rx)  t += `   ↓ RX (Downstream): ${rx} dBm\n`;
+        if (tx)  t += `   ↑ TX (Upstream): ${tx} dBm\n`;
+        if (atu) t += `   〰 Atenuação: ${atu} dB\n`;
+    }
+    if (pendencias.length > 0) {
+        t += `━━━━━━━━━━━━━━━━━━━━\n`;
+        t += `⚠️ PENDÊNCIAS (${pendencias.length}):\n`;
+        pendencias.forEach((p,i) => { t += `   ${i+1}. ${p}\n`; });
+    }
+    const obs = gvn('f-obs');
+    if (obs) {
+        t += `━━━━━━━━━━━━━━━━━━━━\n`;
+        t += `📝 OBSERVAÇÃO:\n${obs}\n`;
+    }
+    t += `\nInovar Telecom · Equipe MDU`;
+
+    navigator.clipboard.writeText(t)
+        .then(() => showToast('✅ Copiado para o WhatsApp!'))
+        .catch(() => {
+            const ta = document.createElement('textarea');
+            ta.value = t; document.body.appendChild(ta); ta.select();
+            document.execCommand('copy'); document.body.removeChild(ta);
+            showToast('✅ Copiado!');
+        });
+}
+
+// ── Screenshot ───────────────────────────────────────
+async function takeScreenshot() {
+    const el = document.getElementById('capture-area');
+    const hides = document.querySelectorAll('.no-print');
+    hides.forEach(e => e.style.display = 'none');
+    el.classList.add('printing-mode');
+    try {
+        const canvas = await html2canvas(el, { backgroundColor:'#f8fafc', scale:3, useCORS:true });
+        const img = new Image();
+        img.src = canvas.toDataURL('image/png');
+        img.className = 'max-w-full h-auto rounded shadow';
+        document.getElementById('screenshot-container').innerHTML = '';
+        document.getElementById('screenshot-container').appendChild(img);
+        document.getElementById('screenshot-modal').classList.remove('hidden');
+    } catch(e) { showToast('⚠️ Erro ao gerar imagem.'); }
+    finally { hides.forEach(e => e.style.display = ''); el.classList.remove('printing-mode'); }
+}
+function closeModal() { document.getElementById('screenshot-modal').classList.add('hidden'); }
+
+// ── Excel ─────────────────────────────────────────────
+function exportExcel() {
+    const rows = [
+        ['CARIMBO – CONSTRUÇÃO / ATIVAÇÃO – Inovar Telecom · Equipe MDU'],[''],
+        ['IDENTIFICAÇÃO'],
+        ['Técnico', gv('f-tecnico')], ['OS/Protocolo', gv('f-os')],
+        ['Tipo de Serviço', toggleState.tipo||'—'], ['Status', toggleState.status||'—'],
+        ['Data Início', fmtDate('f-data-inicio')], ['Data Conclusão', fmtDate('f-data-conclusao')],[''],
+        ['LOCALIZAÇÃO'],
+        ['Endereço', gv('f-endereco')], ['Número', gv('f-numero')], ['Condomínio', gv('f-condominio')],[''],
+        ['INFRAESTRUTURA'],
+        ['HFC', toggleState.hfc||'—'], ['Caixa M', gv('f-caixa-m')], ['Node', gv('f-node')],
+        ['Área', gv('f-area')], ['DIO', gv('f-dio')], ['NAP', gv('f-nap')],
+        ['Prumadas', gv('f-prumadas')], ['Andares', gv('f-andares')], ['HP', gv('f-hp')],[''],
+        ['DADOS TÉCNICOS'],
+        ['UMs Total', gv('f-ums-total')], ['UMs Ativadas', gv('f-ums-ativas')],
+        ['Portas Disponíveis', gv('f-portas-total')], ['Portas Utilizadas', gv('f-portas-usadas')],
+        ['Tipo de Cabo', gv('f-cabo-tipo')], ['Metragem (m)', gv('f-cabo-metro')],
+        ['Tipo de Splitter', gv('f-splitter-tipo')], ['Qtd. Splitters', gv('f-splitter-qtd')],
+        ['Sinal RX (dBm)', gv('f-sinal-rx')], ['Sinal TX (dBm)', gv('f-sinal-tx')],
+        ['Atenuação (dB)', gv('f-atenuacao')],[''],
+        ['PENDÊNCIAS'],
+        ...pendencias.map((p,i) => [`${i+1}.`, p]),[''],
+        ['OBSERVAÇÕES'], [gv('f-obs')]
+    ];
+    const ws = XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols'] = [{wch:22},{wch:45}];
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'CARIMBO');
+    XLSX.writeFile(wb, `Carimbo_MDU_${today}.xlsx`);
+    showToast('📊 Excel gerado!');
+}
+
+// ── Clear ─────────────────────────────────────────────
+function clearAll() {
+    if (!confirm('Limpar todos os campos?')) return;
+    ['f-tecnico','f-os','f-data-conclusao','f-endereco','f-numero','f-condominio',
+     'f-caixa-m','f-node','f-area','f-prumadas','f-dio','f-nap','f-andares','f-hp',
+     'f-ums-total','f-ums-ativas','f-portas-total','f-portas-usadas',
+     'f-cabo-tipo','f-cabo-metro','f-splitter-tipo','f-splitter-qtd',
+     'f-sinal-rx','f-sinal-tx','f-atenuacao','f-obs',
+     'f-hfc','f-tipo','f-status'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+    document.getElementById('f-data-inicio').value = today;
+    ['tipo-grupo','status-grupo','hfc-grupo'].forEach(g => {
+        document.getElementById(g)?.querySelectorAll('.toggle-btn').forEach(b => b.className = 'toggle-btn');
+    });
+    Object.keys(toggleState).forEach(k => delete toggleState[k]);
+    pendencias = []; renderPend();
+    updateSubtitle();
+    showToast('🗑 Campos limpos!');
+}
+
+// ── GPS ───────────────────────────────────────────────
+function getGeo() {
+    if (!navigator.geolocation) { showToast('GPS não disponível.'); return; }
+    showToast('📍 Buscando localização...');
+    navigator.geolocation.getCurrentPosition(async pos => {
+        try {
+            const r = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}&addressdetails=1`);
+            const d = await r.json();
+            if (d.address) {
+                const a = d.address;
+                document.getElementById('f-endereco').value = a.road || a.pedestrian || '';
+                document.getElementById('f-numero').value = a.house_number || 'S/N';
+                updateSubtitle();
+                showToast('✅ Endereço preenchido!');
             }
-            text += `\n_Inovar Telecom · Equipe MDU_`;
+        } catch(e) { showToast('Erro ao obter endereço.'); }
+    }, () => showToast('Permissão de GPS negada.'));
+}
 
-            navigator.clipboard.writeText(text)
-                .then(() => showToast('✅ Copiado para o WhatsApp!'))
-                .catch(() => {
-                    const ta = document.createElement('textarea');
-                    ta.value = text;
-                    document.body.appendChild(ta);
-                    ta.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(ta);
-                    showToast('✅ Copiado!');
-                });
-        }
-
-        // ── Screenshot ───────────────────────────────────
-        async function takeScreenshot() {
-            const el = document.getElementById('capture-area');
-            const hides = document.querySelectorAll('.no-print');
-            hides.forEach(e => e.style.display = 'none');
-            el.classList.add('printing-mode');
-            try {
-                const canvas = await html2canvas(el, { backgroundColor: '#f8fafc', scale: 3, useCORS: true });
-                const img = new Image();
-                img.src = canvas.toDataURL('image/png');
-                img.className = 'max-w-full h-auto rounded shadow';
-                document.getElementById('screenshot-container').innerHTML = '';
-                document.getElementById('screenshot-container').appendChild(img);
-                document.getElementById('screenshot-modal').classList.remove('hidden');
-            } catch(e) {
-                showToast('⚠️ Erro ao gerar imagem.');
-            } finally {
-                hides.forEach(e => e.style.display = '');
-                el.classList.remove('printing-mode');
-            }
-        }
-        function closeModal() {
-            document.getElementById('screenshot-modal').classList.add('hidden');
-        }
-
-        // ── Excel ─────────────────────────────────────────
-        function exportExcel() {
-            const hfc = hfcValue || '—';
-            const rows = [
-                ['CARIMBO – CONSTRUÇÃO / ATIVAÇÃO'],
-                [''],
-                ['CAMPO', 'VALOR'],
-                ['DATA INÍCIO', fmtDate('f-data-inicio')],
-                ['DATA CONCLUSÃO', fmtDate('f-data-conclusao')],
-                [''],
-                ['ENDEREÇO', gv('f-endereco')],
-                ['NÚMERO', gv('f-numero')],
-                ['CONDOMÍNIO', gv('f-condominio')],
-                [''],
-                ['POSSUI HFC', hfc],
-                ['CAIXA M', gv('f-caixa-m')],
-                ['NODE', gv('f-node')],
-                ['ÁREA', gv('f-area')],
-                [''],
-                ['QTD. PRUMADAS', gv('f-prumadas')],
-                ['DIO', gv('f-dio')],
-                ['NAP', gv('f-nap')],
-                ['QUANTOS ANDARES', gv('f-andares')],
-                ['QUANTOS HP', gv('f-hp')],
-                [''],
-                ['OBSERVAÇÃO', gv('f-obs')],
-            ];
-            const ws = XLSX.utils.aoa_to_sheet(rows);
-            ws['!cols'] = [{ wch: 22 }, { wch: 40 }];
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, 'CARIMBO');
-            XLSX.writeFile(wb, `Carimbo_Construcao_${today}.xlsx`);
-            showToast('📊 Excel gerado!');
-        }
-
-        // ── Clear ─────────────────────────────────────────
-        function clearAll() {
-            if (!confirm('Limpar todos os campos?')) return;
-            ['f-data-inicio','f-data-conclusao','f-endereco','f-numero','f-condominio',
-             'f-caixa-m','f-node','f-area','f-prumadas','f-dio','f-nap','f-andares','f-hp','f-obs']
-             .forEach(id => { document.getElementById(id).value = ''; });
-            document.getElementById('f-data-inicio').value = today;
-            setHFC('');
-            hfcValue = '';
-            document.getElementById('hfc-sim').className = 'toggle-btn';
-            document.getElementById('hfc-nao').className = 'toggle-btn';
-            updateSubtitle();
-            showToast('🗑 Campos limpos!');
-        }
-
-        // ── GPS ───────────────────────────────────────────
-        function getGeo() {
-            if (!navigator.geolocation) { showToast('GPS não disponível.'); return; }
-            showToast('📍 Buscando localização...');
-            navigator.geolocation.getCurrentPosition(async pos => {
-                try {
-                    const r = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}&addressdetails=1`);
-                    const d = await r.json();
-                    if (d.address) {
-                        const a = d.address;
-                        document.getElementById('f-endereco').value = a.road || a.pedestrian || '';
-                        document.getElementById('f-numero').value = a.house_number || 'S/N';
-                        updateSubtitle();
-                        showToast('✅ Endereço preenchido!');
-                    }
-                } catch(e) { showToast('Erro ao obter endereço.'); }
-            }, () => showToast('Permissão de GPS negada.'));
-        }
-
-        // ── Toast ─────────────────────────────────────────
-        function showToast(msg) {
-            const t = document.getElementById('toast');
-            t.textContent = msg;
-            t.className = 'show';
-            setTimeout(() => t.className = '', 3000);
-        }
-    </script>
+// ── Toast ─────────────────────────────────────────────
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.className = 'show';
+    setTimeout(() => t.className = '', 3000);
+}
+</script>
 </body>
 </html>
